@@ -186,7 +186,7 @@ public class DeathGamerules {
             TileEntityTombstone tombstone = tombstoneOnDeath ? placeTombstone(player) : null;
             if (tombstone != null) {
              //   tombstone.setSignString(event.source.func_151519_b((EntityPlayer) event.entity).toString());
-            	tombstone.setSignString("Here lies " + player + " slain by a " + event.source.getSourceOfDamage().getCommandSenderName());
+            	tombstone.setSignString("Here lies " + player.getDisplayName().toUpperCase() + " slain by " + event.source.getSourceOfDamage().getCommandSenderName());
             }
 
             if (!dropInventory && !dropHotbar && !dropArmor && !dropXP) {
