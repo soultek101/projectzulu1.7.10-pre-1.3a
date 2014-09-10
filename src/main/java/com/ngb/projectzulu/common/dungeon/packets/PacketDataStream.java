@@ -1,7 +1,6 @@
 package com.ngb.projectzulu.common.dungeon.packets;
 
 import io.netty.buffer.ByteBuf;
-import io.netty.channel.ChannelHandlerContext;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
@@ -12,6 +11,7 @@ import java.io.IOException;
 import net.minecraft.nbt.CompressedStreamTools;
 import net.minecraft.nbt.NBTTagCompound;
 import com.ngb.projectzulu.common.core.PZPacket;
+import com.ngb.projectzulu.common.core.PZPacketBase;
 import com.ngb.projectzulu.common.core.ProjectZuluLog;
 
 /**
@@ -19,14 +19,14 @@ import com.ngb.projectzulu.common.core.ProjectZuluLog;
  * 
  * This allows using Minecraft methods to write traditional Minecraft objects, such as NBT data
  */
-public abstract class PacketDataStream implements PZPacket {
+public abstract class PacketDataStream extends PZPacketBase {
 
     @Override
-    public void encodeInto(ChannelHandlerContext ctx, ByteBuf buffer) {
+    public void toBytes(ByteBuf buffer) {
         ByteArrayOutputStream byteArray = new ByteArrayOutputStream();
         DataOutputStream data = new DataOutputStream(byteArray);
         try {
-            writeData(ctx, data);
+            writeData(data);
         } catch (Exception e) {
             // TODO: log exception
         }
@@ -35,10 +35,10 @@ public abstract class PacketDataStream implements PZPacket {
         buffer.writeBytes(bytes);
     }
 
-    protected abstract void writeData(ChannelHandlerContext ctx, DataOutputStream buffer) throws IOException;
+    protected abstract void writeData(DataOutputStream buffer) throws IOException;
 
     @Override
-    public void decodeInto(ChannelHandlerContext ctx, ByteBuf buffer) {
+    public void fromBytes(ByteBuf buffer) {
         int byteLength = buffer.readInt();
         byte[] dataBytes = new byte[byteLength];
         buffer.readBytes(dataBytes);
@@ -46,13 +46,13 @@ public abstract class PacketDataStream implements PZPacket {
         ByteArrayInputStream byteArray = new ByteArrayInputStream(dataBytes);
         DataInputStream data = new DataInputStream(byteArray);
         try {
-            readData(ctx, data);
+            readData(data);
         } catch (Exception e) {
             // TODO: log exception
         }
     }
 
-    protected abstract void readData(ChannelHandlerContext ctx, DataInputStream buffer) throws IOException;
+    protected abstract void readData(DataInputStream buffer) throws IOException;
 
     /**
      * Reads a compressed NBTTagCompound from the InputStream

@@ -5,14 +5,17 @@ import java.io.IOException;
 import io.netty.buffer.ByteBuf;
 import io.netty.buffer.ByteBufInputStream;
 import io.netty.buffer.ByteBufOutputStream;
-import io.netty.channel.ChannelHandlerContext;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.tileentity.TileEntity;
 import com.ngb.projectzulu.common.blocks.tombstone.TileEntityTombstone;
 import com.ngb.projectzulu.common.core.PZPacket;
 import com.ngb.projectzulu.common.dungeon.packets.PacketByteStream;
 
-public class PacketTileText extends PacketByteStream {
+import cpw.mods.fml.common.network.simpleimpl.IMessage;
+import cpw.mods.fml.common.network.simpleimpl.IMessageHandler;
+import cpw.mods.fml.common.network.simpleimpl.MessageContext;
+
+public class PacketTileText extends PacketByteStream implements IMessageHandler<PacketTileText, IMessage> {
     private int tileLocationX;
     private int tileLocationY;
     private int tileLocationZ;
@@ -27,7 +30,7 @@ public class PacketTileText extends PacketByteStream {
     }
 
     @Override
-    protected void writeData(ChannelHandlerContext ctx, ByteBufOutputStream buffer) throws IOException {
+    protected void writeData(ByteBufOutputStream buffer) throws IOException {
         buffer.writeInt(tileLocationX);
         buffer.writeInt(tileLocationY);
         buffer.writeInt(tileLocationZ);
@@ -39,7 +42,7 @@ public class PacketTileText extends PacketByteStream {
     }
 
     @Override
-    protected void readData(ChannelHandlerContext ctx, ByteBufInputStream buffer) throws IOException {
+    protected void readData(ByteBufInputStream buffer) throws IOException {
         tileLocationX = buffer.readInt();
         tileLocationY = buffer.readInt();
         tileLocationZ = buffer.readInt();
@@ -70,4 +73,9 @@ public class PacketTileText extends PacketByteStream {
             }
         }
     }
+
+	@Override
+	public IMessage onMessage(PacketTileText message, MessageContext ctx) {
+		return handleMessage(message, ctx);
+	}
 }

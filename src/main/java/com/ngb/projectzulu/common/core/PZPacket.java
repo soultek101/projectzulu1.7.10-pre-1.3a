@@ -1,29 +1,29 @@
 package com.ngb.projectzulu.common.core;
 
-import io.netty.buffer.ByteBuf;
-import io.netty.channel.ChannelHandlerContext;
-import net.minecraft.entity.player.EntityPlayer;
+import com.ngb.projectzulu.common.mobs.packets.PacketAnimTime;
 
-public interface PZPacket {
+import io.netty.buffer.ByteBuf;
+import net.minecraft.entity.player.EntityPlayer;
+import cpw.mods.fml.common.network.simpleimpl.IMessage;
+import cpw.mods.fml.common.network.simpleimpl.IMessageHandler;
+import cpw.mods.fml.common.network.simpleimpl.MessageContext;
+
+public interface PZPacket extends IMessage {
     /**
      * Encode the packet data into the ByteBuf stream. Complex data sets may need specific data handlers (See
      * 
      * @link{cpw.mods.fml.common.network.ByteBuffUtils )
-     * 
-     * @param ctx channel context
      * @param buffer the buffer to encode into
      */
-    public abstract void encodeInto(ChannelHandlerContext ctx, ByteBuf buffer);
+    public abstract void toBytes(ByteBuf buffer);
 
     /**
      * Decode the packet data from the ByteBuf stream. Complex data sets may need specific data handlers (See
      * 
      * @link{cpw.mods.fml.common.network.ByteBuffUtils )
-     * 
-     * @param ctx channel context
      * @param buffer the buffer to decode from
      */
-    public abstract void decodeInto(ChannelHandlerContext ctx, ByteBuf buffer);
+    public abstract void fromBytes(ByteBuf buffer);
 
     /**
      * Handle a packet on the client side. Note this occurs after decoding has completed.
@@ -38,4 +38,6 @@ public interface PZPacket {
      * @param player the player reference
      */
     public abstract void handleServerSide(EntityPlayer player);
+    
+	public IMessage handleMessage(PZPacket message, MessageContext ctx);
 }

@@ -2,7 +2,6 @@ package com.ngb.projectzulu.common.mobs.packets;
 
 import io.netty.buffer.ByteBufInputStream;
 import io.netty.buffer.ByteBufOutputStream;
-import io.netty.channel.ChannelHandlerContext;
 
 import java.io.IOException;
 
@@ -12,10 +11,14 @@ import net.minecraft.world.World;
 import com.ngb.projectzulu.common.dungeon.packets.PacketByteStream;
 import com.ngb.projectzulu.common.mobs.entity.EntityGenericTameable;
 
+import cpw.mods.fml.common.network.simpleimpl.IMessage;
+import cpw.mods.fml.common.network.simpleimpl.IMessageHandler;
+import cpw.mods.fml.common.network.simpleimpl.MessageContext;
+
 /**
  * Sync entity Name to server from GUI
  */
-public class PacketNameSync extends PacketByteStream {
+public class PacketNameSync extends PacketByteStream implements IMessageHandler<PacketNameSync, IMessage> {
     private int entityIdToBeNamed;
     private String entityName;
 
@@ -26,14 +29,14 @@ public class PacketNameSync extends PacketByteStream {
     }
 
     @Override
-    protected void writeData(ChannelHandlerContext ctx, ByteBufOutputStream buffer) throws IOException {
+    protected void writeData(ByteBufOutputStream buffer) throws IOException {
         buffer.writeInt(entityIdToBeNamed);
         buffer.writeInt(entityName.length());
         buffer.writeChars(entityName);
     }
 
     @Override
-    protected void readData(ChannelHandlerContext ctx, ByteBufInputStream buffer) throws IOException {
+    protected void readData(ByteBufInputStream buffer) throws IOException {
         entityIdToBeNamed = buffer.readInt();
         int nameLength = buffer.readInt();
         char[] nameChars = new char[nameLength];
@@ -53,4 +56,9 @@ public class PacketNameSync extends PacketByteStream {
             ((EntityGenericTameable) entity).setUsername(entityName);
         }
     }
+
+	@Override
+	public IMessage onMessage(PacketNameSync message, MessageContext ctx) {
+		return handleMessage(message, ctx);
+	}
 }

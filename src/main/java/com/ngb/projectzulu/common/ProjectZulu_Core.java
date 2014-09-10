@@ -138,7 +138,6 @@ public class ProjectZulu_Core {
         zuluConfig.save();
 
         proxy.bossHealthTicker();
-        packetPipeline = new PacketPipeline("ProjectZulu");
 
         for (ModuleInfo moduleInfo : modules) {
             if (moduleInfo.isEnabled) {
@@ -187,7 +186,7 @@ public class ProjectZulu_Core {
     @EventHandler
     public void load(FMLInitializationEvent event) {
         NetworkRegistry.INSTANCE.registerGuiHandler(ProjectZulu_Core.modInstance, new ZuluGuiHandler());
-        packetPipeline.initialise(event);
+        packetPipeline = new PacketPipeline("ProjectZulu");
         for (ModuleInfo moduleInfo : modules) {
             if (moduleInfo.isEnabled) {
                 moduleInfo.module.init(event, modConfigDirectoryFile);

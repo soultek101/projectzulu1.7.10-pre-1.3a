@@ -1,7 +1,7 @@
 package com.ngb.projectzulu.common.dungeon.packets;
 
 import ibxm.Player;
-import io.netty.channel.ChannelHandlerContext;
+import io.netty.buffer.ByteBuf;
 
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
@@ -12,9 +12,15 @@ import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.world.World;
 import com.ngb.projectzulu.common.core.PZPacket;
+import com.ngb.projectzulu.common.core.PZPacketBase;
 import com.ngb.projectzulu.common.dungeon.TileEntityLimitedMobSpawner;
+import com.ngb.projectzulu.common.mobs.packets.PacketAnimTime;
 
-public class PacketMobSpawner extends PacketDataStream {
+import cpw.mods.fml.common.network.simpleimpl.IMessage;
+import cpw.mods.fml.common.network.simpleimpl.IMessageHandler;
+import cpw.mods.fml.common.network.simpleimpl.MessageContext;
+
+public class PacketMobSpawner extends PacketDataStream implements IMessageHandler<PacketMobSpawner, IMessage> {
     int entityIDtoSync;
     private int posX;
     private int posY;
@@ -30,7 +36,7 @@ public class PacketMobSpawner extends PacketDataStream {
     }
 
     @Override
-    protected void writeData(ChannelHandlerContext ctx, DataOutputStream buffer) throws IOException {
+    protected void writeData(DataOutputStream buffer) throws IOException {
         buffer.writeInt(posX);
         buffer.writeInt(posY);
         buffer.writeInt(posZ);
@@ -38,7 +44,7 @@ public class PacketMobSpawner extends PacketDataStream {
     }
 
     @Override
-    protected void readData(ChannelHandlerContext ctx, DataInputStream buffer) throws IOException {
+    protected void readData(DataInputStream buffer) throws IOException {
         posX = buffer.readInt();
         posY = buffer.readInt();
         posZ = buffer.readInt();
@@ -64,4 +70,21 @@ public class PacketMobSpawner extends PacketDataStream {
             ((TileEntityLimitedMobSpawner) tileEntity).forceUpdate();
         }
     }
+
+	@Override
+	public void toBytes(ByteBuf buffer) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void fromBytes(ByteBuf buffer) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public IMessage onMessage(PacketMobSpawner message, MessageContext ctx) {
+		return handleMessage(message, ctx);
+	}
 }
