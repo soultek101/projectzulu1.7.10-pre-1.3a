@@ -1,20 +1,19 @@
 package com.ngb.projectzulu.common.mobs.packets;
 
-import ibxm.Player;
 import io.netty.buffer.ByteBuf;
-import io.netty.channel.ChannelHandlerContext;
-
-import java.io.DataInputStream;
-import java.io.DataOutputStream;
-import java.io.IOException;
-
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.world.World;
+
 import com.ngb.projectzulu.common.core.PZPacket;
+import com.ngb.projectzulu.common.core.PZPacketBase;
 import com.ngb.projectzulu.common.mobs.entity.EntityGenericCreature;
 
-public class PacketAnimTime implements PZPacket {
+import cpw.mods.fml.common.network.simpleimpl.IMessage;
+import cpw.mods.fml.common.network.simpleimpl.IMessageHandler;
+import cpw.mods.fml.common.network.simpleimpl.MessageContext;
+
+public class PacketAnimTime extends PZPacketBase implements IMessageHandler<PacketAnimTime, IMessage> {
 
     private int entityIDtoSync;
     private int animTime;
@@ -26,13 +25,13 @@ public class PacketAnimTime implements PZPacket {
     }
 
     @Override
-    public void encodeInto(ChannelHandlerContext ctx, ByteBuf buffer) {
+    public void toBytes(ByteBuf buffer) {
         buffer.writeInt(entityIDtoSync);
         buffer.writeInt(animTime);
     }
 
     @Override
-    public void decodeInto(ChannelHandlerContext ctx, ByteBuf buffer) {
+    public void fromBytes(ByteBuf buffer) {
         entityIDtoSync = buffer.readInt();
         animTime = buffer.readInt();
     }
@@ -52,4 +51,9 @@ public class PacketAnimTime implements PZPacket {
     public void handleServerSide(EntityPlayer player) {
 
     }
+
+	@Override
+	public IMessage onMessage(PacketAnimTime message, MessageContext ctx) {
+		return handleMessage(message, ctx);
+	}
 }

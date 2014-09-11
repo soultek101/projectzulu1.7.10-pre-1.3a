@@ -1,15 +1,19 @@
 package com.ngb.projectzulu.common.mobs.packets;
 
 import io.netty.buffer.ByteBuf;
-import io.netty.channel.ChannelHandlerContext;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.world.World;
 import com.ngb.projectzulu.common.core.PZPacket;
+import com.ngb.projectzulu.common.core.PZPacketBase;
 import com.ngb.projectzulu.common.mobs.entity.EntityFollower;
 import com.ngb.projectzulu.common.mobs.entity.EntityMaster;
 
-public class PacketFollowerMasterData implements PZPacket {
+import cpw.mods.fml.common.network.simpleimpl.IMessage;
+import cpw.mods.fml.common.network.simpleimpl.IMessageHandler;
+import cpw.mods.fml.common.network.simpleimpl.MessageContext;
+
+public class PacketFollowerMasterData extends PZPacketBase implements IMessageHandler<PacketFollowerMasterData, IMessage> {
 
     int childEntityID;
     int masterEntityID;
@@ -23,14 +27,14 @@ public class PacketFollowerMasterData implements PZPacket {
     }
 
     @Override
-    public void encodeInto(ChannelHandlerContext ctx, ByteBuf buffer) {
+    public void toBytes(ByteBuf buffer) {
         buffer.writeInt(childEntityID);
         buffer.writeInt(masterEntityID);
         buffer.writeInt(followerIndex);
     }
 
     @Override
-    public void decodeInto(ChannelHandlerContext ctx, ByteBuf buffer) {
+    public void fromBytes(ByteBuf buffer) {
         childEntityID = buffer.readInt();
         masterEntityID = buffer.readInt();
         followerIndex = buffer.readInt();
@@ -52,4 +56,10 @@ public class PacketFollowerMasterData implements PZPacket {
     @Override
     public void handleServerSide(EntityPlayer player) {
     }
+
+	@Override
+	public IMessage onMessage(PacketFollowerMasterData message,
+			MessageContext ctx) {
+		return handleMessage(message, ctx);
+	}
 }
